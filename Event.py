@@ -20,4 +20,5 @@
 
 
 class Event:
-    pass
+    ...
+    
