@@ -8,12 +8,13 @@
 в main можно использовать ТОЛЬКО interface
 """
 
-
 import datetime
 import calendar
 from colorama import Fore
 import subprocess
 import math
+
+import Calendar
 
 
 class Interface:
@@ -21,8 +22,8 @@ class Interface:
                     6: 'Июнь', 7: 'Июль', 8: 'Август', 9: 'Сентябрь', 10: 'Октябрь',
                     11: 'Ноябрь', 12: 'Декабрь'}
     __DAYS_WEEK = ('Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс')
-    __state_machin = None
     _func_queue = []
+    _calendar = Calendar.Calendar()
 
     @staticmethod
     def create_monthcalendar(year, month):
@@ -71,8 +72,17 @@ class Interface:
             Interface._func_queue.append(Interface.show_calendar(m=-1 + m))
         elif result == '>':
             Interface._func_queue.append(Interface.show_calendar(m=1 + m))
+        elif result == '<<':
+            Interface._func_queue.append(Interface.show_calendar(y=-1 + y))
+        elif result == '>>':
+            Interface._func_queue.append(Interface.show_calendar(y=1 + y))
+        elif result == 'add':
+            Interface._calendar.add_event()
+            Interface._func_queue.append(Interface.show_calendar())
         elif result == '0':
             exit()
+        else:
+            raise ValueError('не допустимое значение ввода!')
 
     @staticmethod
     def start():
@@ -86,4 +96,3 @@ class Interface:
 
 interface_start = Interface()
 interface_start.start()
-
