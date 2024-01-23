@@ -21,14 +21,14 @@ class Backend:
         return cls.__instance
 
     @staticmethod
-    def write_to_csv(data):
+    def write_event(data):
         if 'events.csv' not in os.listdir('./data_base'):
-            with open('data_base/events.csv', 'x') as f:
+            with open('data_base/events.csv', 'x', newline='') as f:
                 w = csv.DictWriter(f, fieldnames=['date', 'name', 'description'])
                 w.writeheader()
                 w.writerow(data)
         else:
-            with open('data_base/events.csv', 'a') as f:
+            with open('data_base/events.csv', 'a', newline='') as f:
                 w = csv.DictWriter(f, fieldnames=['date', 'name', 'description'])
                 w.writerow(data)
         input('=' * 37 + '\n'

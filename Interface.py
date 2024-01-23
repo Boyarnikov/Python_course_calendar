@@ -15,6 +15,7 @@ import subprocess
 import math
 
 import Calendar
+import User
 
 
 class Interface:
@@ -24,6 +25,11 @@ class Interface:
     __DAYS_WEEK = ('Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс')
     _func_queue = []
     _calendar = Calendar.Calendar()
+    _user = User.User()
+
+    @staticmethod
+    def clear_window():
+        subprocess.call('clear')  # очистить терминал MacOs, windows 'cls'
 
     @staticmethod
     def create_monthcalendar(year, month):
@@ -38,7 +44,7 @@ class Interface:
 
     @staticmethod
     def show_calendar(m=0, y=0):
-        subprocess.call('clear')  # очистить терминал MacOs, windows 'cls'
+        Interface.clear_window()
         year: int = datetime.datetime.now().year + y
         month_current: int = datetime.datetime.now().month + m
         day_now: int = datetime.datetime.now().day if month_current == datetime.datetime.now().month else None
@@ -65,8 +71,8 @@ class Interface:
         result = input('''
 Поменять месяц введите: '<' или '>'
 Поменять год введите: '<<' или '>>'
-Добавить мероприятие введите: 'add'
-Завершить работу программы: '0'
+Добавить мероприятие введите: add
+Завершить работу программы: 0
 ''')
         if result == '<':
             Interface._func_queue.append(Interface.show_calendar(m=-1 + m))
@@ -84,13 +90,40 @@ class Interface:
         else:
             raise ValueError('не допустимое значение ввода!')
 
-    @staticmethod
-    def start():
-        Interface._func_queue.append(Interface.show_calendar())
-        while Interface._func_queue:
-            Interface._func_queue[0]()
-            del Interface._func_queue[0]
-        print('Календарь закончил работу!')
+    # @staticmethod
+    def run_enter(self):
+        print('\n'
+              'Добро пожаловать в программу Календарь!\n'
+              'С помощью данной программы вы сможете легко и непринуждённо планировать свои дела!')
+        result = input('=' * 37 + '\n'
+                                  'Если у Вас есть аккаунт для входа нажмите Enter\n'
+                                  'Для регистрации нового аккаунта введите: reg\n')
+        if result == 'reg':
+            name = input('Введите имя пользователя: ')
+            while True:
+                pwd = input('Введитре пароль: ')
+                pwd2 = input('Повторите пароль: ')
+                if pwd == pwd2:
+                    break
+                else:
+                    print('Пароли не совпадают! попробуйте еще раз')
+            self._user.create_user(name=name, pwd=pwd)
+            self._func_queue.append(self.add_user)
+        else:
+            pass
+
+    def add_user(self):
+        pass
+
+        # print(self._user.get_name(), self._user.get_hash_pwd(), 'add_user')
+
+    # @staticmethod
+    def start(self):
+        self._func_queue.append(self.run_enter)
+        while self._func_queue:
+            self._func_queue[0]()
+            del self._func_queue[0]
+        print('Календарь закончил работу!!!')
         exit()
 
 
