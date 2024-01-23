@@ -8,7 +8,7 @@
 в main можно использовать ТОЛЬКО interface
 """
 
-import datetime
+import datetime as dt
 import calendar
 from colorama import Fore
 import subprocess
@@ -26,6 +26,8 @@ class Interface:
     _func_queue = []
     _calendar = Calendar.Calendar()
     _user = User.User()
+    _count_m = 0
+    _count_y = 0
 
     @staticmethod
     def clear_window():
@@ -42,20 +44,22 @@ class Interface:
             days_list[i // 7][i % 7] = j
         return days_list
 
-    @staticmethod
-    def show_calendar(m=0, y=0):
+    # @staticmethod
+    def show_calendar(self):
         Interface.clear_window()
-        year: int = datetime.datetime.now().year + y
-        month_current: int = datetime.datetime.now().month + m
-        day_now: int = datetime.datetime.now().day if month_current == datetime.datetime.now().month else None
-        if month_current < 1:
-            year, month_current = year - 1, 12
-        if month_current > 12:
-            year, month_current = year + 1, 1
-        month = Interface.__DICT_MONTH.get(month_current)
+        year_now = dt.datetime.now().year
+        month = dt.datetime.now().month
+        y = self._count_m // 12 + self._count_y
+        month_int: int = month + self._count_m % 12
+        year: int = year_now + y
+        # days_months = sum([calendar.monthrange(year, i)[1] for i in range(month, month_int)])
+        day_now: int = dt.datetime.now().day if month == month_int and year_now == year else None             # (today + dt.timedelta(days=days_months)) == today
+        month = self.__DICT_MONTH.get(month_int)
+
         print('<< |', str(year).center(22), '| >>')
         print(*Interface.__DAYS_WEEK, sep=' | ')
-        num_days = Interface.create_monthcalendar(year, month_current)
+
+        num_days = Interface.create_monthcalendar(year, month_int)
         for week in num_days:
             for day in week:
                 if day == day_now:
@@ -64,10 +68,10 @@ class Interface:
                     print(str(day).rjust(2), end=' | ')
             print('')
         print('<  |', month.center(22), '|  >')
-        Interface.state_start(m, y)
+        self._func_queue.append(self.state_start)
 
-    @staticmethod
-    def state_start(m, y):
+    # @staticmethod
+    def state_start(self):
         result = input('''
 Поменять месяц введите: '<' или '>'
 Поменять год введите: '<<' или '>>'
@@ -75,16 +79,20 @@ class Interface:
 Завершить работу программы: 0
 ''')
         if result == '<':
-            Interface._func_queue.append(Interface.show_calendar(m=-1 + m))
+            self._count_m -= 1
+            Interface._func_queue.append(self.show_calendar)
         elif result == '>':
-            Interface._func_queue.append(Interface.show_calendar(m=1 + m))
+            self._count_m += 1
+            self._func_queue.append(self.show_calendar)
         elif result == '<<':
-            Interface._func_queue.append(Interface.show_calendar(y=-1 + y))
+            self._count_y -= 1
+            self._func_queue.append(self.show_calendar)
         elif result == '>>':
-            Interface._func_queue.append(Interface.show_calendar(y=1 + y))
+            self._count_y += 1
+            self._func_queue.append(self.show_calendar)
         elif result == 'add':
-            Interface._calendar.add_event()
-            Interface._func_queue.append(Interface.show_calendar())
+            self._calendar.add_event()
+            self._func_queue.append(Interface.show_calendar)
         elif result == '0':
             exit()
         else:
@@ -119,7 +127,7 @@ class Interface:
 
     # @staticmethod
     def start(self):
-        self._func_queue.append(self.run_enter)
+        self._func_queue.append(self.show_calendar)  # run_enter
         while self._func_queue:
             self._func_queue[0]()
             del self._func_queue[0]
