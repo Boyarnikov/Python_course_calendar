@@ -82,6 +82,7 @@ class Interface:
 Изменить месяц введите: '<' или '>'
 Изменить год введите: '<<' или '>>'
 Добавить мероприятие введите: add
+Посмотреть мероприятия введите: get
 Завершить работу программы: 0
 ''')
         if result == '<':
@@ -97,8 +98,12 @@ class Interface:
             self._count_y += 1
             self._func_queue.append(self.show_calendar)
         elif result == 'add':
-            self._calendar.add_event()
-            self._func_queue.append(Interface.show_calendar)
+            _name = self._user.get_name()
+            self._calendar.add_event(name=_name)
+            self._func_queue.append(self.show_calendar)
+        elif result == 'get':
+            _name = self._user.get_name()
+            print(self._calendar.get_events(name=_name))
         elif result == '0':
             pass
         else:

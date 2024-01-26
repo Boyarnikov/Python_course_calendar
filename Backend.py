@@ -10,29 +10,33 @@
 """
 import csv
 import os
+import datetime as dt
 
 
 class Backend:
-    # __instance = None
-
-    # def __new__(cls, *args, **kwargs):
-    #     if cls.__instance is None:
-    #         cls.__instance = super().__new__(cls)
-    #     return cls.__instance
 
     @staticmethod
-    def write_event(data):
-        if 'events.csv' not in os.listdir('./data_base'):
-            with open('data_base/events.csv', 'x', newline='') as f:
-                w = csv.DictWriter(f, fieldnames=['date', 'name', 'description'])
-                w.writeheader()
-                w.writerow(data)
-        else:
-            with open('data_base/events.csv', 'a', newline='') as f:
-                w = csv.DictWriter(f, fieldnames=['date', 'name', 'description'])
-                w.writerow(data)
+    def write_event(data, name_csv):
+        with open(f'data_base/{name_csv}.csv', 'a', newline='') as f:
+            w = csv.DictWriter(f, fieldnames=['date', 'name', 'description'])
+            w.writerow(data)
         input('=' * 37 + '\n'
                          f'Событие "{data.get("name")}" добавлено! для продолжения нажмите Enter')
+
+    @staticmethod
+    def events_from_csv(name_csv):
+        with open(f'data_base/{name_csv}.csv', 'r') as f:
+            r = csv.DictReader(f, fieldnames=['date', 'name', 'description'])
+            list_events = ['Мероприятия:\n']
+            # print(list(r))
+            for n in r:
+                if n['name'] == 'name':
+                    continue
+                d = dt.datetime.fromtimestamp(int(n['date'])).strftime('%d-%m-%Y')
+                list_events.append(f"Дата: {d}\n"
+                                   f"Название: {n['name']}\n"
+                                   f"Описание: {n['description']}\n\n")
+        return list_events if len(list_events) > 1 else 'У Вас нет запланированных мероприятий!\n'
 
     @staticmethod
     def add_user_bk(name, pwd):
@@ -62,11 +66,9 @@ class Backend:
 
     @staticmethod
     def check_user_pwd(name, pwd):
-        print(name, pwd, 'name, pwd')
         with open('data_base/domains.csv', 'r') as f:
             r = csv.DictReader(f, fieldnames=['name', 'pwd'])
             for n in r:
-                print(n['name'], n['pwd'], "n['name'] == name and n['pwd']")
                 if n['name'] == name and n['pwd'] == pwd:
                     return True
             return False

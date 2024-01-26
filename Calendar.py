@@ -13,18 +13,18 @@ class Calendar:
     __data_state = {'date': 0, 'name': '', 'description': ''}
     __state_machin = None
     _bk = Backend.Backend()
+    _name_user = ''
 
     def _name_state(self):
         self.__state_machin = 'name'
-        result = input("Введите названия события\n"
-                       "Завершить работу программы: '0'\n")
+        result = input("Введите названия события:\n")
+
         self.__data_state[self.__state_machin] = result
         self._descr_state()
 
     def _date_state(self):
         self.__state_machin = 'date'
-        result = input("Введите дату события в формате dd-mm-yyyy\n"
-                       "Завершить работу программы: '0'\n").split('-')
+        result = input("Введите дату события в формате: dd-mm-yyyy\n").split('-')
         if result == '0':
             exit()
         elif all(map(lambda x: x.isdigit(), result)):
@@ -37,13 +37,14 @@ class Calendar:
 
     def _descr_state(self):
         self.__state_machin = 'description'
-        result = input("Введите краткое описание\n"
-                       "Завершить работу программы: '0'\n")
+        result = input("Введите краткое описание:\n")
         self.__data_state[self.__state_machin] = result
-        self._bk.write_event(self.__data_state)
+        self._bk.write_event(data=self.__data_state, name_csv=self._name_user)
 
-    def add_event(self):
+    def add_event(self, name):
+        self._name_user = name
         self._date_state()
 
-    def get_events(self):
-        pass
+    def get_events(self, name):
+        return self._bk.events_from_csv(name_csv=name)
+
