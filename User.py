@@ -18,3 +18,4 @@ class User:
 
     def get_hash_pwd(self):
         return self._pwd
+
