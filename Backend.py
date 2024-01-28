@@ -28,12 +28,11 @@ class Backend:
         with open(f'data_base/{name_csv}.csv', 'r') as f:
             r = csv.DictReader(f, fieldnames=['date', 'name', 'description'])
             list_events = ['Мероприятия:\n']
-            # print(list(r))
-            for n in r:
-                if n['name'] == 'name':
-                    continue
+            r = sorted(list(r)[1:], key=lambda x: int(x['date']))
+            for i, n in enumerate(r, start=1):
                 d = dt.datetime.fromtimestamp(int(n['date'])).strftime('%d-%m-%Y')
-                list_events.append(f"Дата: {d}\n"
+                list_events.append(f"№ {i}\n"
+                                   f"Дата: {d}\n"
                                    f"Название: {n['name']}\n"
                                    f"Описание: {n['description']}\n\n")
         return list_events if len(list_events) > 1 else 'У Вас нет запланированных мероприятий!\n'
@@ -72,3 +71,25 @@ class Backend:
                 if n['name'] == name and n['pwd'] == pwd:
                     return True
             return False
+
+    @staticmethod
+    def del_event_csv(name_csv, date):
+        with open(f'data_base/{name_csv}.csv', 'r') as f:
+            r = csv.DictReader(f, fieldnames=['date', 'name', 'description'])
+            new_r = []
+            for i in r:
+                _d = {}
+                if i['date'] == str(date) or i['date'] == 'date':
+                    continue
+                _d['date'] = i['date']
+                _d['name'] = i['name']
+                _d['description'] = i['description']
+                new_r.append(_d)
+
+        with open(f'data_base/{name_csv}.csv', 'w') as f:
+            w = csv.DictWriter(f, fieldnames=['date', 'name', 'description'])
+            w.writeheader()
+            for row in new_r:
+                w.writerow(row)
+
+

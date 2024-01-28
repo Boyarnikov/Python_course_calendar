@@ -48,3 +48,7 @@ class Calendar:
     def get_events(self, name):
         return self._bk.events_from_csv(name_csv=name)
 
+    def del_event(self, name, event: str):
+        date: str = event.split('\n')[1].split()[1]
+        ds: int = int(datetime.datetime.strptime(date, '%d-%m-%Y').timestamp())
+        self._bk.del_event_csv(name_csv=name, date=ds)

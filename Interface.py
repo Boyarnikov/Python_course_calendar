@@ -45,8 +45,6 @@ class Interface:
         # days_list = [[' ' for _ in range(7)] for _ in range(math.ceil(len(gen_monthcalendar) / 7))]       #  if not have numpy
         days_list = np.zeros((math.ceil(len(gen_monthcalendar) / 7), 7), dtype=object)
         for i, j in enumerate(gen_monthcalendar):
-            if j == 0:
-                j = ' '
             days_list[i // 7][i % 7] = j
         return days_list
 
@@ -68,6 +66,8 @@ class Interface:
         num_days = Interface.create_monthcalendar(year, month_int)
         for week in num_days:
             for day in week:
+                if day == 0:
+                    day = ' '
                 if day == day_now:
                     print(Fore.BLUE + str(day).rjust(2) + Fore.RESET, end=' | ')
                 else:
@@ -102,9 +102,32 @@ class Interface:
             self._calendar.add_event(name=_name)
             self._func_queue.append(self.show_calendar)
         elif result == 'get':
-            _name = self._user.get_name()
-            print(self._calendar.get_events(name=_name))
+            self._func_queue.append(self._get_delete_event)
+
         elif result == '0':
+            pass
+        else:
+            raise ValueError('не допустимое значение ввода!')
+
+    def _get_delete_event(self):
+        Interface.clear_window()
+        _name = self._user.get_name()
+        events = self._calendar.get_events(name=_name)
+        print(*events)
+        res = input('''Удалить мероприятие введите его номер:
+Вернуться в главное меню введите: back
+Завершить работу программы: 0
+ ''')
+        if res.isdigit() and res != '0':
+            try:
+                self._calendar.del_event(name=_name, event=events[int(res)])
+            except IndexError:
+                raise ValueError('такого мероприятия не существует')
+            print('Мероприятие удалено!')
+            self._func_queue.append(self._get_delete_event)
+        elif res == 'back':
+            self._func_queue.append(self.show_calendar)
+        elif res == '0':
             pass
         else:
             raise ValueError('не допустимое значение ввода!')
