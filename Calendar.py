@@ -5,6 +5,7 @@
 У каждого календаря ровно один пользователь.
 """
 import datetime
+import re
 
 import Backend
 
@@ -23,14 +24,18 @@ class Calendar:
         self._descr_state()
 
     def _date_state(self):
+        date_regular = r'^\d{2}-\d{2}-\d{4}$'
         self.__state_machin = 'date'
-        result = input("Введите дату события в формате: dd-mm-yyyy\n").split('-')
-        if result == '0':
-            exit()
-        elif all(map(lambda x: x.isdigit(), result)):
+        result = input("Введите дату события в формате: dd-mm-yyyy\n"
+                       "Завершить работу программы: 0\n")
+        if re.match(date_regular, result):
+            result = result.split('-')
+        if all(map(lambda x: x.isdigit(), result)):
             self.__data_state[self.__state_machin] = int(
                 datetime.datetime.strptime('-'.join(result), '%d-%m-%Y').timestamp())
             self._name_state()
+        elif result == '0':
+            pass
         else:
             print('не корректный ввод')
             self._date_state()

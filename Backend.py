@@ -10,7 +10,7 @@
 """
 import csv
 import os
-import datetime as dt
+
 
 
 class Backend:
@@ -26,16 +26,7 @@ class Backend:
     @staticmethod
     def events_from_csv(name_csv):
         with open(f'data_base/{name_csv}.csv', 'r') as f:
-            r = csv.DictReader(f, fieldnames=['date', 'name', 'description'])
-            list_events = ['Мероприятия:\n']
-            r = sorted(list(r)[1:], key=lambda x: int(x['date']))
-            for i, n in enumerate(r, start=1):
-                d = dt.datetime.fromtimestamp(int(n['date'])).strftime('%d-%m-%Y')
-                list_events.append(f"№ {i}\n"
-                                   f"Дата: {d}\n"
-                                   f"Название: {n['name']}\n"
-                                   f"Описание: {n['description']}\n\n")
-        return list_events if len(list_events) > 1 else 'У Вас нет запланированных мероприятий!\n'
+            return list(csv.DictReader(f, fieldnames=['date', 'name', 'description']))
 
     @staticmethod
     def add_user_bk(name, pwd):
