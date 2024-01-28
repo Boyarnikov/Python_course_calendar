@@ -12,9 +12,7 @@ import csv
 import os
 
 
-
 class Backend:
-
     @staticmethod
     def write_event(data, name_csv):
         with open(f'data_base/{name_csv}.csv', 'a', newline='') as f:
@@ -82,5 +80,3 @@ class Backend:
             w.writeheader()
             for row in new_r:
                 w.writerow(row)
-
-

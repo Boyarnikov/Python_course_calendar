@@ -7,7 +7,6 @@
 
 в main можно использовать ТОЛЬКО interface
 """
-import datetime
 import datetime as dt
 import calendar
 from colorama import Fore
@@ -48,7 +47,6 @@ class Interface:
             days_list[i // 7][i % 7] = j
         return days_list
 
-    # @staticmethod
     def show_calendar(self):
         Interface.clear_window()
         year_now = dt.datetime.now().year
@@ -75,7 +73,7 @@ class Interface:
                         if unix_timestamp < now_timestamp:
                             print(Fore.LIGHTBLACK_EX + str(day).rjust(2) + Fore.RESET, end=' | ')
                         else:
-                            print(Fore.YELLOW+ str(day).rjust(2) + Fore.RESET, end=' | ')
+                            print(Fore.YELLOW + str(day).rjust(2) + Fore.RESET, end=' | ')
                         continue
                 if day == 0:
                     day = ' '
@@ -87,7 +85,6 @@ class Interface:
         print('<  |', month.center(22), '|  >')
         self._func_queue.append(self.state_start)
 
-    # @staticmethod
     def state_start(self):
         result = input('''
 Изменить месяц введите: '<' или '>'
@@ -161,7 +158,6 @@ class Interface:
             input('Для продолжения нажмите Enter')
             self._func_queue.append(self.show_calendar)
 
-
     def state_enter(self):
         result = input('=' * 37 + '\n'
                                   'Пробывать еще раз: try\n'
@@ -228,7 +224,6 @@ class Interface:
         time.sleep(2)
         self._func_queue.append(self.show_calendar)
 
-    # @staticmethod
     def start(self):
         self._func_queue.append(self.run_welcome)  # run_enter
         while self._func_queue:
@@ -236,7 +231,3 @@ class Interface:
             del self._func_queue[0]
         print('Календарь закончил работу!!!')
         exit()
-
-
-interface_start = Interface()
-interface_start.start()
