@@ -8,6 +8,7 @@ import datetime
 import re
 
 import Backend
+import Event
 
 
 class Calendar:
@@ -44,7 +45,9 @@ class Calendar:
         self.__state_machin = 'description'
         result = input("Введите краткое описание:\n")
         self.__data_state[self.__state_machin] = result
-        self._bk.write_event(data=self.__data_state, name_csv=self._name_user)
+        self._ev = Event.Event(data=self.__data_state, name_user=self._name_user)
+        self._ev.set_json_to_bk()
+
 
     def add_event(self, name):
         self._name_user = name
@@ -57,3 +60,6 @@ class Calendar:
         date: str = event.split('\n')[1].split()[1]
         ds: int = int(datetime.datetime.strptime(date, '%d-%m-%Y').timestamp())
         self._bk.del_event_csv(name_csv=name, date=ds)
+
+    def get_name_event(self):
+        return self._ev.name_event

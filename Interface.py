@@ -9,7 +9,7 @@
 """
 import datetime as dt
 import calendar
-from colorama import Fore
+from colorama import Fore, Back
 import subprocess
 import math
 import numpy as np
@@ -82,7 +82,10 @@ class Interface:
                 else:
                     print(str(day).rjust(2), end=' | ')
             print('')
-        print('<  |', month.center(22), '|  >')
+        print('<  |', month.center(22), '|  >\n')
+        print(Back.BLUE + ' ', Back.RESET, '- Текущая дата')
+        print(Back.GREEN+' ', Back.RESET, '- Запланированные мероприятия')
+        print(Back.LIGHTBLACK_EX + ' ', Back.RESET, '- Прошедшие мероприятия')
         self._func_queue.append(self.state_start)
 
     def state_start(self):
@@ -108,6 +111,8 @@ class Interface:
         elif result == 'add':
             _name = self._user.get_name()
             self._calendar.add_event(name=_name)
+            input('=' * 37 + '\n'
+                             f'Событие "{self._calendar.get_name_event()}" добавлено! для продолжения нажмите Enter')
             self._func_queue.append(self.show_calendar)
         elif result == 'get':
             self._func_queue.append(self._get_delete_event)
@@ -146,6 +151,8 @@ class Interface:
             elif res == 'add':
                 _name = self._user.get_name()
                 self._calendar.add_event(name=_name)
+                input('=' * 37 + '\n'
+                                 f'Событие "{self._calendar.get_name_event()}" добавлено! для продолжения нажмите Enter')
                 self._func_queue.append(self.show_calendar)
             elif res == 'back':
                 self._func_queue.append(self.show_calendar)
@@ -173,8 +180,8 @@ class Interface:
             raise ValueError('не допустимые значения ввода')
 
     def run_welcome(self):
-        print('\n'
-              'Добро пожаловать в программу Календарь!\n'
+        Interface.clear_window()
+        print('Добро пожаловать в программу Календарь!\n'
               'С помощью данной программы вы сможете легко и непринуждённо планировать свои дела!')
         result = input('=' * 37 + '\n'
                                   'Если у Вас есть аккаунт для входа нажмите Enter\n'

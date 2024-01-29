@@ -10,16 +10,19 @@
 """
 import csv
 import os
+import json
 
 
 class Backend:
     @staticmethod
-    def write_event(data, name_csv):
-        with open(f'data_base/{name_csv}.csv', 'a', newline='') as f:
+    def write_event(json_data):
+        from_json = json.loads(json_data)
+        name_csv = [n for n in from_json]
+        data = from_json[name_csv[0]]
+        with open(f'data_base/{name_csv[0]}.csv', 'a', newline='') as f:
             w = csv.DictWriter(f, fieldnames=['date', 'name', 'description'])
             w.writerow(data)
-        input('=' * 37 + '\n'
-                         f'Событие "{data.get("name")}" добавлено! для продолжения нажмите Enter')
+
 
     @staticmethod
     def events_from_csv(name_csv):
