@@ -49,13 +49,13 @@ class Interface:
 
     def show_calendar(self):
         Interface.clear_window()
+        print(Back.RED + f'Пользователь: {self._user.get_name()} ' + Back.RESET)
         year_now = dt.datetime.now().year
         month = dt.datetime.now().month
         y = self._count_m // 12 + self._count_y
         month_int: int = month + self._count_m % 12
         year: int = year_now + y
-        # days_months = sum([calendar.monthrange(year, i)[1] for i in range(month, month_int)])
-        day_now: int = dt.datetime.now().day if month == month_int and year_now == year else None  # (today + dt.timedelta(days=days_months)) == today
+        day_now: int = dt.datetime.now().day if month == month_int and year_now == year else None
         month = self.__DICT_MONTH.get(month_int)
         now_timestamp = dt.datetime.now().timestamp()
 
@@ -94,6 +94,7 @@ class Interface:
 Изменить год введите: '<<' или '>>'
 Добавить мероприятие введите: add
 Посмотреть мероприятия введите: get
+Сменить пользователя введите: ch
 Завершить работу программы: 0
 ''')
         if result == '<':
@@ -116,7 +117,8 @@ class Interface:
             self._func_queue.append(self.show_calendar)
         elif result == 'get':
             self._func_queue.append(self._get_delete_event)
-
+        elif result == 'ch':
+            self.run_enter()
         elif result == '0':
             pass
         else:
@@ -133,7 +135,10 @@ class Interface:
             list_events.append(f"№ {i}\n"
                                f"Дата: {d}\n"
                                f"Название: {n['name']}\n"
-                               f"Описание: {n['description']}\n\n")
+                               f"Описание: {n['description']}\n"
+                               f"Организатор: {n['organizer']}\n"
+                               f"Участники: {n['participants'][1:-1]}\n\n")
+
         if len(list_events) > 1:
             print(*list_events)
             res = input('''Удалить мероприятие введите его номер:
@@ -152,7 +157,7 @@ class Interface:
                 _name = self._user.get_name()
                 self._calendar.add_event(name=_name)
                 input('=' * 37 + '\n'
-                                 f'Событие "{self._calendar.get_name_event()}" добавлено! для продолжения нажмите Enter')
+                                f'Событие "{self._calendar.get_name_event()}" добавлено! для продолжения нажмите Enter')
                 self._func_queue.append(self.show_calendar)
             elif res == 'back':
                 self._func_queue.append(self.show_calendar)

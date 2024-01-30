@@ -23,13 +23,17 @@ class Event:
     date_event = None
     name_event = None
     description = None
+    organizer = None
     set_data = None
     name_user = None
+    participants = None
 
-    def __init__(self, data, name_user):
+    def __init__(self, data, name_user, org_name):
         self.date_event = data['date']
         self.name_event = data['name']
         self.description = data['description']
+        self.participants = data['participants']
+        self.organizer = org_name
         self.name_user = name_user
         self.set_data = {name_user: data}
 
